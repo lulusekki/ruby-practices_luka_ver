@@ -43,3 +43,5 @@ Pull Requestの作成画面では、merge先として **自分自身のアカウ
 - [プルリクエスト形式で提出物を出す際の「これはやっちゃダメ」リスト](https://bootcamp.fjord.jp/pages/317)、[GitHubでコードを提出するときに気をつけること](https://bootcamp.fjord.jp/pages/info-for-github)を一読してください。
 - 基本的に、1課題につきPull Requestは1つとします。
 - もし、誤って1つのPull Request内に複数の課題の内容を含めてしまった時、修正する方法がわからない場合は、一度リポジトリ自体を消してForkからやり直してください。
+
+test
