@@ -1,16 +1,12 @@
-# ruby-practices
+## 学習を進める上でのメモ
 
-フィヨルドブートキャンプのRubyプラクティスの提出物をまとめる
-
-# 学習を進める上でのメモ
-
-1. 各プラクティスのブランチを**main**ブランチから作ってください。例えばfizzbuzz用ならば以下のようにします。
+- プラクティス単位でブランチをmainから作成する
 ```
+fizzbuzzのプラクティスならならば以下
 $ git checkout -b my-fizzbuzz main
 ```
-2. 各プラクティスの提出物ファイルを該当のディレクトリの中に作成してください。
-3. ソースコードが完成したら、提出前にrubocopを実行し、警告の箇所を修正してください。
-(ただし、fizzbuzz、calendar、rakeの提出時は不要です)
+- 各プラクティスの提出物ファイルを該当のディレクトリの中に作成してください。
+- ソースコードが完成したら、提出前にrubocopを実行し、警告の箇所を修正してください。(ただし、fizzbuzz、calendar、rakeの提出時は不要です)
 
 ```
 # bowlingのディレクトリに配置したファイルをrubocopで確認する例
@@ -19,12 +15,11 @@ $ cd ruby-practices/04.bowling
 $ rubocop
 ```
 
-4. Pull Requestを作成し、URLを提出してください。
-Pull Requestの作成画面では、merge先として **自分自身のアカウントのruby-practices** を指定してください。
-また、**作成したPull Requestは提出後に確認OKをもらうまでmergeのボタンを押さないでください。**
+- Pull Requestを作成し、merge先は自分のリポジトリを指定する
+  - **作成したPull Requestは提出後に確認OKをもらうまでmergeのボタンを押さないでください。**
 ![Pull Request作成画面](https://user-images.githubusercontent.com/2603449/99864665-0c145c00-2be8-11eb-8501-14bd484529f2.png)
 
-<details><summary>メモ</summary>
+<details><summary>注意点</summary>
 
 # 注意点
 
@@ -33,3 +28,6 @@ Pull Requestの作成画面では、merge先として **自分自身のアカウ
 - もし、誤って1つのPull Request内に複数の課題の内容を含めてしまった時、修正する方法がわからない場合は、一度リポジトリ自体を消してForkからやり直してください。
 
 </details>
+
+## 学習する上での確認点
+- プルリク作成時に自分のプルリク(compare branch)がbase repository(ruby-practices_luka_ver)に向かっているか確認する
