@@ -31,3 +31,5 @@ $ rubocop
 
 ## 学習する上での確認点
 - プルリク作成時に自分のプルリク(compare branch)がbase repository(ruby-practices_luka_ver)に向かっているか確認する
+  - デフォルトでは、自分のプルリク(compare branch)がbase repository(fjordllc/ruby-practices)に向かっている
+  - ミスらないように、デフォルトを変更したいけど、githubの仕様で変更できないっぽい
