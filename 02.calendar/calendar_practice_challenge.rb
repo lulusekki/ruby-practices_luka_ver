@@ -96,40 +96,17 @@ end
 
 day_of_week_num = start_day.wday # -> Integer
 
-month_days_dd_ver_1 = (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => Array<String
+month_days_array = ["　"] * day_of_week_num + (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => "全角の空白" + Array<String
 
-sky_array = Array.new(day_of_week_num, "  ")
+week_divide = month_days_array.each_slice(7)
 
-day_of_week_num.times { sky_array.unshift(day_of_week_num*day_of_week_num) }
-
-week_divide = day_of_week_num.each_slice(7)
-
-week_divide.each do |c|
-  puts c.join(" ")
-end
-
-
-# 
-
-# 曜日番号を取得
-
-
-# .wdayで取得した曜日番号(インデックス番号)を利用して曜日を出力するために、ハッシュを作る
-# day_of_week = {1 => "月", 2 => "火", 3 => "水", 4 => "木", 5 => "金", 6 => "土", 0 => "日"}
-
-=begin
 puts "      #{mon}月 #{year}"
 puts "日 月 火 水 木 金 土" # 日曜始まりならこれだけ？後で変数化するかも
-day_of_week_num.times do |num|
-  print " "*num
-end
-
 week_divide.each do |c|
   puts c.join(" ")
 end
-=end
 
 # TODO：やること
-# 1日のスタートの位置が、月によって変わるので、そこcalコマンドと違いがある
 # オプションの設定
+# -y 
 # macのcalコマンドだと、当日は文字と背景色が反転している
