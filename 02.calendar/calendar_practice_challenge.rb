@@ -79,18 +79,57 @@ end
 
 
 # 9. ヘッダーの作成。曜日を漢字で表示。
-# 曜日と日付が縦列で整合性が取れている状態にしたい
-
-a = (start_day..end_day).map{ |month_days| month_days.strftime("%d")}
-b = a.each_slice(7)
+=begin
+day_of_week_num = (start_day..end_day).map{ |month_days| month_days.strftime("%d")}
+week_divide = a.each_slice(7)
 
 puts "      #{mon}月 #{year}"
-b.each do |c|
+puts "日 月 火 水 木 金 土" # 日曜始まりならこれだけ？後で変数化するかも
+week_divide.each do |c|
+  puts c.join(" ")
+end
+=end
+
+# 10. 1日のスタートの位置を調整する
+# 1日が何曜日かを取得して、概要の曜日から表示がスタートするようにする
+# .wdayで0(日曜日)〜6(月曜日)を取得できる -> Integer
+
+day_of_week_num = start_day.wday # -> Integer
+
+month_days_dd_ver_1 = (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => Array<String
+
+sky_array = Array.new(day_of_week_num, "  ")
+
+day_of_week_num.times { sky_array.unshift(day_of_week_num*day_of_week_num) }
+
+week_divide = day_of_week_num.each_slice(7)
+
+week_divide.each do |c|
   puts c.join(" ")
 end
 
+
+# 
+
+# 曜日番号を取得
+
+
+# .wdayで取得した曜日番号(インデックス番号)を利用して曜日を出力するために、ハッシュを作る
+# day_of_week = {1 => "月", 2 => "火", 3 => "水", 4 => "木", 5 => "金", 6 => "土", 0 => "日"}
+
+=begin
+puts "      #{mon}月 #{year}"
+puts "日 月 火 水 木 金 土" # 日曜始まりならこれだけ？後で変数化するかも
+day_of_week_num.times do |num|
+  print " "*num
+end
+
+week_divide.each do |c|
+  puts c.join(" ")
+end
+=end
+
 # TODO：やること
-# ヘッダーの作成。曜日を漢字で表示
+# 1日のスタートの位置が、月によって変わるので、そこcalコマンドと違いがある
 # オプションの設定
 # macのcalコマンドだと、当日は文字と背景色が反転している
-# 1日のスタートの位置が、月によって変わるので、そこcalコマンドと違いがある
