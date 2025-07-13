@@ -1,9 +1,42 @@
 #!/usr/bin/env ruby
-
 require 'date'
+require 'optparse'
 
-# 基本オブジェクトを作成
-day = Date.today
+# どのタイミングの日付(カレンダー)を表示するか決める
+params = {} # paramsの初期値
+opt = OptionParser.new
+
+# ハッシュ化させる
+params = ARGV.getopts("m:", "y:")
+
+# これはおまじない
+opt.parse!(ARGV) 
+
+# 個々でも扱えるよに変数に格納
+option_m = params["m"].to_i # paramsはハッシュなのでキーだけを出力。何を入力してもStringが返ってくる。一旦はintに変換して出力。その後に不正データが入力された場合のエラーハンドリングを行う
+option_y = params["y"].to_i
+
+# puts option_m # 変数に格納した-mの引数を利用する
+# puts option_y # 変数に格納した-yの引数を利用する
+# puts params # ARGVのハッシュを出力させる
+
+
+# ここからは、ゴミデータを入力されたときに エラーになる
+# オプションがmax2つ
+# 今のコードだと、`./calendar_practice_challenge.rb -m 50 100 -y a`、`./calendar_practice_challenge.rb -m 50 100 -y a`、こんな感じで配列を2つ以上作れてしまう
+# 2つ以上ならエラー、
+# 両方とも整数でないなら、エラー
+# -mの時のみ、整数なら実行
+
+# オプションがあるか、ないか、
+# 配列を加工する
+# オプションでnilがあったら、nilを配列に加える
+
+
+# =begin
+
+# 日付に基本オブジェクトを作成
+day = Date.new(option_y, option_m, 1)
 year = day.year
 mon = day.month
 
@@ -13,93 +46,18 @@ start_day = Date.new(year, mon, 1)
 # 月末最終日の取得
 end_day = Date.new(year, mon, -1)
 
-# puts start_day
-# puts end_day
+# 11. オプションを設定する
 
-# 1. yy-mm-dd形式での表示はこれ
-=begin
-(start_day..end_day).each{ |month_days| puts month_days.strftime("%Y-%m-%d") } # strftimeがstringを返す
-=end
-
-# 2. 日付の範囲取得(表示)のベースはこれよさそう
-=begin
-# (start_day..end_day).each{ |month_days| puts month_days.strftime("%d") }
-
-# 3. puts(強制改行付き)で表示してるから、5個づつに分割する(カレンダーチックにする)
-# each_sliceで分割が可能だが、データフォーマットと相性悪い
-# これはだめ
-=begin
-a = (start_day..end_day).to_a # --> => Array
-# a.strftime("%d")
-b = a.join(",") # --> => String
-puts b
-=end
-
-# 4. ざっくりだが、日付のデータフォーマントの変換と型変換はこれでいける
-=begin
-a = (start_day..end_day).each{ |month_days| puts month_days.strftime("%d") } # --> => Array
-puts a.map{|a| a.strftime("%d") } # --> => String(mapで変換)
-=end
-
-# 5. データフォーマットを維持する(もうちょい綺麗にする)
-# あと、上のだと2つの配列がputsされるので変換する
-=begin
-a = (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => range型をString(mapで変換)
-puts a
-=end
-
-# 6. 7個づつに分割する(カレンダーチックにする)
-# ダブルクォーテーションとカッコとカンマを除去する。putsで頑張った(多分明日コードを見たら理解できない)
-=begin
-a = (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => range型をString(mapで変換)。Array<String
-b = a.each_slice(7) # --> => 新しい配列を7分割(Array<String)
-# puts b.class # --> => Enumerator型？Array<Stringのまま？
-=end
-
-# 7. 配列型eachで配列を全て扱う。7分割は終わっているのでダブルクオーテーションを除去
-=begin
-a = (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => range型をString(mapで変換)。Array<String
-b = a.each_slice(7) # --> => 新しい配列を7分割(Array<String)
-
-b.each do |c|
-  puts c.join(" ")
-end
-=end
-
-# 8. ヘッダーの作成。年,月を表示。Macやcalコマンドと同じ見た目になっている
-=begin
-a = (start_day..end_day).map{ |month_days| month_days.strftime("%d")}
-b = a.each_slice(7)
-
-puts "      #{mon}月 #{year}"
-b.each do |c|
-  puts c.join(" ")
-end
-=end
-
-
-# 9. ヘッダーの作成。曜日を漢字で表示。
-=begin
-day_of_week_num = (start_day..end_day).map{ |month_days| month_days.strftime("%d")}
-week_divide = a.each_slice(7)
-
-puts "      #{mon}月 #{year}"
-puts "日 月 火 水 木 金 土" # 日曜始まりならこれだけ？後で変数化するかも
-week_divide.each do |c|
-  puts c.join(" ")
-end
-=end
-
-# 10. 1日のスタートの位置を調整する
-# 1日が何曜日かを取得して、概要の曜日から表示がスタートするようにする
-# .wdayで0(日曜日)〜6(月曜日)を取得できる -> Integer
-
+# .wdayで0(日曜日)〜6(月曜日)を取得
 day_of_week_num = start_day.wday # -> Integer
 
+# 日数 + 必要な要素数の配列を作る
 month_days_array = ["　"] * day_of_week_num + (start_day..end_day).map{ |month_days| month_days.strftime("%d")} # --> => "全角の空白" + Array<String
 
+# 配列内の値を7分割
 week_divide = month_days_array.each_slice(7)
 
+# 表示命令
 puts "      #{mon}月 #{year}"
 puts "日 月 火 水 木 金 土" # 日曜始まりならこれだけ？後で変数化するかも
 week_divide.each do |c|
@@ -108,5 +66,8 @@ end
 
 # TODO：やること
 # オプションの設定
-# -y 
+# `-m`で月を、`-y`で年を指定できる
+# ただし、`-y`のみ指定して一年分のカレンダーを表示する機能の実装は不要
+# オプションの標準ライブラリの参考URL：https://docs.ruby-lang.org/ja/latest/library/optparse.html
 # macのcalコマンドだと、当日は文字と背景色が反転している
+# =end
