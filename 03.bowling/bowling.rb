@@ -19,10 +19,10 @@ scores.each do |score|
     end
   else
     process_frames << if score == X
-      10
-    else
-      score.to_i
-    end
+                        10
+                      else
+                        score.to_i
+                      end
   end
 end
 
@@ -34,13 +34,14 @@ frames.each_with_index do |frame, idx|
   if frame.sum < 10 && frame.length == 2
     total_scores << frame.sum
   elsif frame.sum == 10 && frame.length == 2
-    if frames[idx + 1]
-      spare_bonus = frames[idx + 1][0]
-    else
-      spare_bonus = 0
-    end
+    spare_bonus = if frames[idx + 1]
+                    frames[idx + 1][0]
+                  else
+                    0
+                  end
     total_scores << frame.sum + spare_bonus
-  else frame.sum == 10 && frame.length == 1
+  else
+    frame.sum == 10 && frame.length == 1
     strike_bonus = frames[idx + 1..idx + 2].flatten.first(2).sum
     total_scores << frame.sum + strike_bonus
   end
