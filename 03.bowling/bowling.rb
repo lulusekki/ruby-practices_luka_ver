@@ -3,21 +3,21 @@
 
 scores = ARGV[0].split(',')
 frames = []
-process_frames = []
+pending_frames = []
 
 scores.each do |score|
   if frames.size < 9
     if score == 'X'
       frames << [10]
     else
-      process_frames << score.to_i
-      if process_frames.size == 2
-        frames << process_frames
-        process_frames = []
+      pending_frames << score.to_i
+      if pending_frames.size == 2
+        frames << pending_frames
+        pending_frames = []
       end
     end
   else
-    process_frames << if score == 'X'
+    pending_frames << if score == 'X'
                         10
                       else
                         score.to_i
@@ -25,7 +25,7 @@ scores.each do |score|
   end
 end
 
-frames << process_frames unless process_frames.empty?
+frames << pending_frames unless pending_frames.empty?
 
 total_scores = []
 
