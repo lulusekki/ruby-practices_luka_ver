@@ -1,14 +1,13 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-X = 'X'
 scores = ARGV[0].split(',')
 frames = []
 process_frames = []
 
 scores.each do |score|
   if frames.size < 9
-    if score == X
+    if score == 'X'
       frames << [10]
     else
       process_frames << score.to_i
@@ -18,7 +17,7 @@ scores.each do |score|
       end
     end
   else
-    process_frames << if score == X
+    process_frames << if score == 'X'
                         10
                       else
                         score.to_i
