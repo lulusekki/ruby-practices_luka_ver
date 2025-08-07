@@ -46,4 +46,4 @@ frames.each_with_index do |frame, idx|
   end
 end
 
-p total_scores.sum
+puts total_scores.sum
