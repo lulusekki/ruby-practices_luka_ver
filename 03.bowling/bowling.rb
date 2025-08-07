@@ -23,19 +23,17 @@ end
 
 frames << pending_frames unless pending_frames.empty?
 
-total_scores = []
-
-frames.each_with_index do |frame, idx|
+total_scores = frames.each_with_index.sum do |frame, idx|
   if frame.sum < 10 && frame.length == 2
-    total_scores << frame.sum
+    frame.sum
   elsif frame.sum == 10 && frame.length == 2
     spare_bonus = frames[idx + 1] ? frames[idx + 1][0] : 0
-    total_scores << frame.sum + spare_bonus
+    frame.sum + spare_bonus
   else
     frame.sum == 10 && frame.length == 1
     strike_bonus = frames[idx + 1..idx + 2].flatten.first(2).sum
-    total_scores << frame.sum + strike_bonus
+    frame.sum + strike_bonus
   end
 end
 
-puts total_scores.sum
+puts total_scores
