@@ -17,11 +17,7 @@ scores.each do |score|
       end
     end
   else
-    pending_frames << if score == 'X'
-                        10
-                      else
-                        score.to_i
-                      end
+    pending_frames << (score == 'X' ? 10 : score.to_i)
   end
 end
 
