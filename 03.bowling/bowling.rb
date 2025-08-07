@@ -29,11 +29,7 @@ frames.each_with_index do |frame, idx|
   if frame.sum < 10 && frame.length == 2
     total_scores << frame.sum
   elsif frame.sum == 10 && frame.length == 2
-    spare_bonus = if frames[idx + 1]
-                    frames[idx + 1][0]
-                  else
-                    0
-                  end
+    spare_bonus = frames[idx + 1] ? frames[idx + 1][0] : 0
     total_scores << frame.sum + spare_bonus
   else
     frame.sum == 10 && frame.length == 1
