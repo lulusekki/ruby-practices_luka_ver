@@ -5,9 +5,7 @@ path = '/Users/lukasekine/development'
 files_in_directory = Array.new(Dir.children(path)).reject { |i| i == '.DS_Store' }.sort
 order_column_num = 3
 
-if files_in_directory.empty?
-  exit 0
-end
+exit 0 if files_in_directory.empty?
 
 remainder_num = files_in_directory.size.divmod(order_column_num)
 
