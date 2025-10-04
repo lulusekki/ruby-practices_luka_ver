@@ -1,30 +1,29 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-ORDER_COLUM_NUM = 3
-ADD_PADDING_STRING = 2
+ORDER_COLUM = 3
+PADDING = 2
 
 def main
-  files_in_directory = Dir.glob("*")
+  files = Dir.glob("*")
   
-  return 0 if files_in_directory.empty?
+  return 0 if files.empty?
   
-  remainder_num = files_in_directory.size.divmod(ORDER_COLUM_NUM)
-  add_array_num = (ORDER_COLUM_NUM - remainder_num[1]) % ORDER_COLUM_NUM
-  add_array_element = [' '] * add_array_num  
-  new_files_in_directory = (files_in_directory << add_array_element).flatten
-  two_dimensional_array_num = new_files_in_directory.size / ORDER_COLUM_NUM
-  two_dimensional_array = new_files_in_directory.each_slice(two_dimensional_array_num).to_a
-  completed_array = two_dimensional_array.transpose
-  file_name_max = files_in_directory.map(&:length).max  
-  output(completed_array, file_name_max)
+  quotient_and_remainder = files.size.divmod(ORDER_COLUM)
+  padding_count = (ORDER_COLUM - quotient_and_remainder[1]) % ORDER_COLUM
+  paddings = [' '] * padding_count
+  padded_files = (files << paddings).flatten
+  rows_count = padded_files.size / ORDER_COLUM
+  files_grid = padded_files.each_slice(rows_count).to_a
+  transposed_files = files_grid.transpose
+  max_filename_length = files.map(&:length).max  
+  output(transposed_files, max_filename_length)
 end
 
-def output(completed_array, file_name_max)
-
-  completed_array.each do |item|
+def output(transposed_files, max_filename_length)
+  transposed_files.each do |item|
     item.each do |row_itme|
-      print row_itme.to_s.ljust(file_name_max + ADD_PADDING_STRING, ' ')
+      print row_itme.to_s.ljust(max_filename_length + PADDING, ' ')
     end
     puts
   end
