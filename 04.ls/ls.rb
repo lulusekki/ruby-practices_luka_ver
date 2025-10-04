@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-path = '/Users/lukasekine/development'
-files_in_directory = Array.new(Dir.open(path))
+files_in_directory = Dir.glob("*")
 order_column_num = 3
 
 exit 0 if files_in_directory.empty?
