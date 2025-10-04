@@ -16,11 +16,7 @@ new_files_in_directory = (files_in_directory << add_array_element).flatten
 
 two_dimensional_array_num = new_files_in_directory.size / order_column_num
 
-def slice_to_array(array, rows)
-  array.each_slice(rows).to_a
-end
-
-two_dimensional_array = slice_to_array(new_files_in_directory, two_dimensional_array_num)
+two_dimensional_array = new_files_in_directory.each_slice(two_dimensional_array_num).to_a
 
 completed_array = two_dimensional_array.transpose
 
