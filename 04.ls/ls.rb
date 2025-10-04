@@ -5,10 +5,10 @@ ORDER_COLUM = 3
 PADDING = 2
 
 def main
-  files = Dir.glob("*")
-  
+  files = Dir.glob('*')
+
   return 0 if files.empty?
-  
+
   quotient_and_remainder = files.size.divmod(ORDER_COLUM)
   padding_count = (ORDER_COLUM - quotient_and_remainder[1]) % ORDER_COLUM
   paddings = [' '] * padding_count
@@ -16,7 +16,7 @@ def main
   rows_count = padded_files.size / ORDER_COLUM
   files_grid = padded_files.each_slice(rows_count).to_a
   transposed_files = files_grid.transpose
-  max_filename_length = files.map(&:length).max  
+  max_filename_length = files.map(&:length).max
   output(transposed_files, max_filename_length)
 end
 
