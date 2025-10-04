@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 path = '/Users/lukasekine/development'
-files_in_directory = Array.new(Dir.children(path)).reject { |i| i == '.DS_Store' }.sort
+files_in_directory = Array.new(Dir.open(path))
 order_column_num = 3
 
 exit 0 if files_in_directory.empty?
