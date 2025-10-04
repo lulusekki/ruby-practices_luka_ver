@@ -1,26 +1,22 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-files_in_directory = Dir.glob("*")
-order_column_num = 3
-
-exit 0 if files_in_directory.empty?
-
-remainder_num = files_in_directory.size.divmod(order_column_num)
-
-add_array_num = (order_column_num - remainder_num[1]) % order_column_num
-
-add_array_element = [' '] * add_array_num
-
-new_files_in_directory = (files_in_directory << add_array_element).flatten
-
-two_dimensional_array_num = new_files_in_directory.size / order_column_num
-
-two_dimensional_array = new_files_in_directory.each_slice(two_dimensional_array_num).to_a
-
-completed_array = two_dimensional_array.transpose
-
-file_name_max = files_in_directory.map(&:length).max
+def main
+  files_in_directory = Dir.glob("*")
+  order_column_num = 3
+  
+  return 0 if files_in_directory.empty?
+  
+  remainder_num = files_in_directory.size.divmod(order_column_num)
+  add_array_num = (order_column_num - remainder_num[1]) % order_column_num
+  add_array_element = [' '] * add_array_num  
+  new_files_in_directory = (files_in_directory << add_array_element).flatten
+  two_dimensional_array_num = new_files_in_directory.size / order_column_num
+  two_dimensional_array = new_files_in_directory.each_slice(two_dimensional_array_num).to_a
+  completed_array = two_dimensional_array.transpose
+  file_name_max = files_in_directory.map(&:length).max  
+  output(completed_array, file_name_max)
+end
 
 def output(completed_array, file_name_max)
   add_padding_string = 2
@@ -33,4 +29,4 @@ def output(completed_array, file_name_max)
   end
 end
 
-output(completed_array, file_name_max)
+main
