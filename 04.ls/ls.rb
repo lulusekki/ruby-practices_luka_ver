@@ -15,13 +15,13 @@ def main
   files_grid = blanked_files.each_slice(rows_count).to_a
   display_files = files_grid.transpose
   column_width = files.map(&:length).max
-  output(display_files, max_filename_length)
+  output(display_files, column_width)
 end
 
-def output(display_files, max_filename_length)
-  display_files.each do |item|
-    item.each do |row_itme|
-      print row_itme.to_s.ljust(column_width + PADDING, ' ')
+def output(display_files, column_width)
+  display_files.each do |display_file|
+    display_file.each do |file_name|
+      print file_name.to_s.ljust(column_width + PADDING, ' ')
     end
     puts
   end
