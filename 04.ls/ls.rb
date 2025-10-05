@@ -14,14 +14,14 @@ def main
   rows_count = blanked_files.size / ORDER_COLUMN
   files_grid = blanked_files.each_slice(rows_count).to_a
   display_files = files_grid.transpose
-  max_filename_length = files.map(&:length).max
+  column_width = files.map(&:length).max
   output(display_files, max_filename_length)
 end
 
 def output(display_files, max_filename_length)
   display_files.each do |item|
     item.each do |row_itme|
-      print row_itme.to_s.ljust(max_filename_length + PADDING, ' ')
+      print row_itme.to_s.ljust(column_width + PADDING, ' ')
     end
     puts
   end
