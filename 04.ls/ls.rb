@@ -13,13 +13,13 @@ def main
   blanked_files = files + blanks
   rows_count = blanked_files.size / ORDER_COLUMN
   files_grid = blanked_files.each_slice(rows_count).to_a
-  transposed_files = files_grid.transpose
+  display_files = files_grid.transpose
   max_filename_length = files.map(&:length).max
-  output(transposed_files, max_filename_length)
+  output(display_files, max_filename_length)
 end
 
-def output(transposed_files, max_filename_length)
-  transposed_files.each do |item|
+def output(display_files, max_filename_length)
+  display_files.each do |item|
     item.each do |row_itme|
       print row_itme.to_s.ljust(max_filename_length + PADDING, ' ')
     end
