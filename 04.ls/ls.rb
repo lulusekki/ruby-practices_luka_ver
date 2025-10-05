@@ -10,7 +10,7 @@ def main
   remainder = files.size % ORDER_COLUMN
   blank_count = (ORDER_COLUMN - remainder) % ORDER_COLUMN
   blanks = [''] * blank_count
-  blanked_files = (files << blanks).flatten
+  blanked_files = files + blanks
   rows_count = blanked_files.size / ORDER_COLUMN
   files_grid = blanked_files.each_slice(rows_count).to_a
   transposed_files = files_grid.transpose
