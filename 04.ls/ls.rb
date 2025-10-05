@@ -7,8 +7,8 @@ PADDING = 2
 def main
   files = Dir.glob('*')
 
-  quotient_and_remainder = files.size.divmod(ORDER_COLUMN)
-  padding_count = (ORDER_COLUMN - quotient_and_remainder[1]) % ORDER_COLUMN
+  remainder = files.size % ORDER_COLUMN
+  padding_count = (ORDER_COLUMN - remainder) % ORDER_COLUMN
   paddings = [' '] * padding_count
   padded_files = (files << paddings).flatten
   rows_count = padded_files.size / ORDER_COLUMN
