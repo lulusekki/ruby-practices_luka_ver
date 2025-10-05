@@ -9,7 +9,7 @@ def main
 
   remainder = files.size % ORDER_COLUMN
   padding_count = (ORDER_COLUMN - remainder) % ORDER_COLUMN
-  paddings = [' '] * padding_count
+  paddings = [''] * padding_count
   padded_files = (files << paddings).flatten
   rows_count = padded_files.size / ORDER_COLUMN
   files_grid = padded_files.each_slice(rows_count).to_a
