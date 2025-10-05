@@ -21,7 +21,7 @@ end
 def output(display_files, column_width)
   display_files.each do |display_file|
     display_file.each do |file_name|
-      print file_name.to_s.ljust(column_width + PADDING, ' ')
+      print file_name.to_s.ljust(column_width + BLANK, ' ')
     end
     puts
   end
