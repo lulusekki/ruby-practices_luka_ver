@@ -11,14 +11,13 @@ def main
   padding_count = (COLUMNS - remainder) % COLUMNS
   padded_files = files + Array.new(padding_count, '')
   row_count = padded_files.size / COLUMNS
-  files_grid = padded_files.each_slice(row_count).to_a
-  display_files = files_grid.transpose
+  file_grid = padded_files.each_slice(row_count).to_a.transpose
   column_width = files.map(&:length).max
-  output(display_files, column_width)
+  output(file_grid, column_width)
 end
 
-def output(display_files, column_width)
-  display_files.each do |display_file|
+def output(file_grid, column_width)
+  file_grid.each do |display_file|
     display_file.each do |file_name|
       print file_name.to_s.ljust(column_width + BLANK, ' ')
     end
