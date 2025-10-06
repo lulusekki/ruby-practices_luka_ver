@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-ORDER_COLUMN = 3
+COLUMNS = 3
 BLANK = 2
 
 def main
