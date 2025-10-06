@@ -7,11 +7,10 @@ BLANK = 2
 def main
   files = Dir.glob('*')
 
-  remainder = files.size % ORDER_COLUMN
-  padding_count = (ORDER_COLUMN - remainder) % ORDER_COLUMN
-  paddings = [''] * padding_count
-  padded_files = files + paddings
-  rows_count = padded_files.size / ORDER_COLUMN
+  remainder = files.size % COLUMNS
+  padding_count = (COLUMNS - remainder) % COLUMNS
+  padded_files = files + Array.new(padding_count, '')
+  rows_count = padded_files.size / COLUMNS
   files_grid = padded_files.each_slice(rows_count).to_a
   display_files = files_grid.transpose
   column_width = files.map(&:length).max
