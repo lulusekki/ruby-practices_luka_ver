@@ -10,8 +10,8 @@ def main
   remainder = files.size % COLUMNS
   padding_count = (COLUMNS - remainder) % COLUMNS
   padded_files = files + Array.new(padding_count, '')
-  rows_count = padded_files.size / COLUMNS
-  files_grid = padded_files.each_slice(rows_count).to_a
+  row_count = padded_files.size / COLUMNS
+  files_grid = padded_files.each_slice(row_count).to_a
   display_files = files_grid.transpose
   column_width = files.map(&:length).max
   output(display_files, column_width)
