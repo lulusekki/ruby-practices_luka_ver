@@ -6,15 +6,15 @@ BLANK = 2
 
 def main
   files = ARGV.include?('-a') ? Dir.entries('.').sort : Dir.glob('*')
-  file_grid, column_width = build_file_grid(files, COLUMNS)
+  file_grid, column_width = build_file_grid(files)
   output(file_grid, column_width)
 end
 
-def build_file_grid(files, columns)
-  remainder = files.size % columns
-  padding_count = (columns - remainder) % columns
+def build_file_grid(files)
+  remainder = files.size % COLUMNS
+  padding_count = (COLUMNS - remainder) % COLUMNS
   padded_files = files + Array.new(padding_count, '')
-  row_count = padded_files.size / columns
+  row_count = padded_files.size / COLUMNS
   file_grid = padded_files.each_slice(row_count).to_a.transpose
   column_width = files.map(&:length).max
 
