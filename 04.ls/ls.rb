@@ -5,7 +5,7 @@ COLUMNS = 3
 BLANK = 2
 
 def main
-  files = ARGV.include?('-a') ? Dir.glob("*", File::FNM_DOTMATCH) : Dir.glob('*')
+  files = ARGV.include?('-a') ? Dir.entries('.').sort : Dir.glob('*')
   output(files)
 end
 
@@ -16,7 +16,7 @@ def build_file_grid(files)
   row_count = padded_files.size / COLUMNS
   file_grid = padded_files.each_slice(row_count).to_a.transpose
   column_width = files.map(&:length).max
-
+  
   [file_grid, column_width]
 end
 
