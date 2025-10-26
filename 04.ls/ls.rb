@@ -5,8 +5,8 @@ COLUMNS = 3
 BLANK = 2
 
 def main
-  files = Dir.glob('*')
-  files = files.reverse if ARGV.include?('-r')
+  default_files = Dir.glob('*')
+  files = ARGV.include?('-r') ? default_files.reverse : default_files
   output(files)
 end
 
