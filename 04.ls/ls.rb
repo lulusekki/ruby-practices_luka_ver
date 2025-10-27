@@ -5,7 +5,8 @@ COLUMNS = 3
 BLANK = 2
 
 def main
-  files = ARGV.include?('-a') ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  default_files = Dir.glob('*')
+  files = ARGV.include?('-r') ? default_files.reverse : default_files
   output(files)
 end
 
