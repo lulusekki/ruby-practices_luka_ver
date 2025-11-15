@@ -5,6 +5,7 @@ require 'optparse'
 require 'etc'
 require 'date'
 require 'debug'
+require 'benchmark'
 
 COLUMNS = 3
 BLANK = 2
@@ -30,6 +31,8 @@ PRMISSION_MODE = {
   '111' => 'rwx'
 }.freeze
 
+result = Benchmark.realtime do
+
 def main
   default_files = Dir.glob('*')
   if ARGV.include?('-l')
@@ -53,17 +56,19 @@ class LongOption
       last_modified_hour_minutes(default_files),
       file_names(default_files)
     ]
-
+  
     puts "total #{total(default_files)}"
 
-    puts(outputs.transpose.map { |output| output.join(' ') })
+    p outputs.transpose
+
+    puts outputs.transpose.map { |output| sleep 0.1; output.join(' ') }
   end
 
   private
 
-  def build_grid(gird_elements)
-    column_width = gird_elements.map { |element| element.to_s.length }.max
-    gird_elements.map { |element| element.to_s.rjust(column_width, ' ') }
+  def build_grid(bird_elements)
+    column_width = bird_elements.map { |element| element.to_s.length }.max
+    bird_elements.map { |element| element.to_s.rjust(column_width, ' ') }
   end
 
   def file_modes(default_files)
@@ -142,7 +147,7 @@ class LongOption
   end
 
   def last_modified_hour_minutes(default_files)
-    gird_elements = default_files.map do |file|
+    bird_elements = default_files.map do |file|
       last_modified_month_day = File.mtime(file).to_date
       six_month = Date.today << 6
       if last_modified_month_day > six_month
@@ -151,7 +156,7 @@ class LongOption
         File.mtime(file).year
       end
     end
-    build_grid(gird_elements)
+    build_grid(bird_elements)
   end
 
   def file_names(default_files)
@@ -185,3 +190,6 @@ class Default
 end
 
 main
+
+end
+puts "処理概要 #{result}s"
