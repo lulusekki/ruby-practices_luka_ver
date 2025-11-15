@@ -4,6 +4,7 @@
 require 'optparse'
 require 'etc'
 require 'date'
+require 'debug'
 
 COLUMNS = 3
 BLANK = 2
@@ -32,19 +33,34 @@ PRMISSION_MODE = {
 def main
   default_files = Dir.glob('*')
   if ARGV.include?('-l')
-    OptionParser.new do |opt|
-      opt.on('-l') do
-        long_option = LongOption.new
-        puts long_option.output(default_files)
-      end
-      opt.parse!(ARGV)
-    end
+    long_option = LongOption.new
+    long_option.output(default_files)
   else
     Default.new.output(default_files)
   end
 end
 
 class LongOption
+  def output(default_files)
+    outputs = [
+      permissions(default_files),
+      hard_links(default_files),
+      owner_names(default_files),
+      group_names(default_files),
+      file_sizes(default_files),
+      last_modified_months(default_files),
+      last_modified_days(default_files),
+      last_modified_hour_minutes(default_files),
+      file_names(default_files)
+    ]
+
+    puts "total #{total(default_files)}"
+
+    puts(outputs.transpose.map { |output| output.join(' ') })
+  end
+
+  private
+
   def build_grid(gird_elements)
     column_width = gird_elements.map { |element| element.to_s.length }.max
     gird_elements.map { |element| element.to_s.rjust(column_width, ' ') }
@@ -141,27 +157,21 @@ class LongOption
   def file_names(default_files)
     default_files
   end
-
-  def output(default_files)
-    outputs = [
-      permissions(default_files),
-      hard_links(default_files),
-      owner_names(default_files),
-      group_names(default_files),
-      file_sizes(default_files),
-      last_modified_months(default_files),
-      last_modified_days(default_files),
-      last_modified_hour_minutes(default_files),
-      file_names(default_files)
-    ]
-
-    puts "total #{total(default_files)}"
-
-    outputs.transpose.map { |output| output.join(' ') }
-  end
 end
 
 class Default
+  def output(default_files)
+    file_grid, column_width = build_grid(default_files)
+    file_grid.each do |files|
+      files.each do |file|
+        print file.to_s.ljust(column_width + BLANK, ' ')
+      end
+      puts
+    end
+  end
+
+  private
+
   def build_grid(default_files)
     remainder = default_files.size % COLUMNS
     padding_count = (COLUMNS - remainder) % COLUMNS
@@ -171,16 +181,6 @@ class Default
     column_width = default_files.map(&:length).max
 
     [file_grid, column_width]
-  end
-
-  def output(default_files)
-    file_grid, column_width = build_grid(default_files)
-    file_grid.each do |files|
-      files.each do |file|
-        print file.to_s.ljust(column_width + BLANK, ' ')
-      end
-      puts
-    end
   end
 end
 
