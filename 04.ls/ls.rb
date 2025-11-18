@@ -4,6 +4,7 @@
 require 'optparse'
 require 'etc'
 require 'date'
+require 'benchmark'
 
 COLUMNS = 3
 BLANK = 2
@@ -39,6 +40,7 @@ def main
   end
 end
 
+result = Benchmark.realtime do
 class LongOption
   def output(default_files)
     files = [
@@ -52,6 +54,8 @@ class LongOption
       last_modified_hour_minutes(default_files),
       file_names(default_files)
     ]
+
+    puts "total #{total(default_files)}"
 
     files_count = files[0].size
 
@@ -197,3 +201,5 @@ class Default
 end
 
 main
+end
+puts "変更後の処理 #{result}s"
