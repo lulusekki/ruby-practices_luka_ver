@@ -4,6 +4,7 @@
 require 'optparse'
 require 'etc'
 require 'date'
+require 'matrix'
 require 'debug'
 require 'benchmark'
 
@@ -44,7 +45,7 @@ result = Benchmark.realtime do
 
   class LongOption
     def output(default_files)
-      outputs = [
+      files = [
         permissions(default_files),
         hard_links(default_files),
         owner_names(default_files),
@@ -56,14 +57,22 @@ result = Benchmark.realtime do
         file_names(default_files)
       ]
 
-      puts "total #{total(default_files)}"
+      files_count = files[0].size
 
-      puts outputs.transpose
-
-      # puts outputs.transpose.map { |output| sleep 0.1; output.join(' ') }
-      outputs.each_with_index do |output, _index|
+      files_count.times do |index|
+        output = [
+          files[0][index],
+          files[1][index],
+          files[2][index],
+          files[3][index],
+          files[4][index],
+          files[5][index],
+          files[6][index],
+          files[7][index],
+          files[8][index]
+        ]
+        puts output.join(' ')
         sleep 0.1
-        puts "テスト :#{output[0][0]}}"
       end
     end
 
@@ -194,4 +203,4 @@ result = Benchmark.realtime do
 
   main
 end
-puts "処理概要 #{result}s"
+puts "変更後の処理時 #{result}s"
