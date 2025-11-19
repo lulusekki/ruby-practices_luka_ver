@@ -43,8 +43,7 @@ end
 result = Benchmark.realtime do
   class LongOption
     def output(default_files)
-      measure("output") do
-        
+      measure('output') do
         files = [
           permissions(default_files),
           hard_links(default_files),
@@ -56,11 +55,11 @@ result = Benchmark.realtime do
           last_modified_hour_minutes(default_files),
           file_names(default_files)
         ]
-  
+
         puts "total #{total(default_files)}"
-  
+
         files_count = files[0].size
-  
+
         files_count.times do |index|
           output = [
             files[0][index],
@@ -82,8 +81,7 @@ result = Benchmark.realtime do
     private
 
     def build_grid(bird_elements)
-      measure("build_grid") do
-        
+      measure('build_grid') do
         column_width = bird_elements.map { |element| element.to_s.length }.max
         bird_elements.map { |element| element.to_s.rjust(column_width, ' ') }
       end
@@ -99,8 +97,7 @@ result = Benchmark.realtime do
     end
 
     def permissions(default_files)
-      measure("permissions") do
-        
+      measure('permissions') do
         permissions = [
           file_types(default_files),
           owners(default_files),
@@ -110,7 +107,7 @@ result = Benchmark.realtime do
 
         permissions_count = default_files.size
 
-        permissions_count.times.map do |index|
+        Array.new(permissions_count) do |index|
           output = [
             permissions[0][index],
             permissions[1][index],
@@ -124,18 +121,16 @@ result = Benchmark.realtime do
     end
 
     def file_types(default_files)
-      measure("file_types") do
+      measure('file_types') do
         file_modes(default_files).map do |file|
           hash_serch_number = file[0..1]
           FILE_TYPE.fetch(hash_serch_number)
         end
-        
       end
     end
 
     def owners(default_files)
-      measure("owners") do
-        
+      measure('owners') do
         file_modes(default_files).map do |file|
           file_mode_number = file[-3]
           file_mode = file_mode_number.to_i.to_s(2).rjust(3, '0')
@@ -145,7 +140,7 @@ result = Benchmark.realtime do
     end
 
     def groups(default_files)
-      measure("groups") do
+      measure('groups') do
         file_modes(default_files).map do |file|
           file_group_number = file[-2]
           file_group = file_group_number.to_i.to_s(2).rjust(3, '0')
