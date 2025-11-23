@@ -42,18 +42,7 @@ end
 
 class LongOption
   def output(default_files)
-    files = [
-      permissions(default_files),
-      hard_links(default_files),
-      owner_names(default_files),
-      group_names(default_files),
-      file_sizes(default_files),
-      last_modified_months(default_files),
-      last_modified_days(default_files),
-      last_modified_hour_minutes(default_files),
-      file_names(default_files)
-    ]
-
+    files = output_grid(default_files)
     puts "total #{total(default_files)}"
 
     files_count = files[0].size
@@ -75,6 +64,20 @@ class LongOption
   end
 
   private
+
+  def output_grid(default_files)
+    [
+      permissions(default_files),
+      hard_links(default_files),
+      owner_names(default_files),
+      group_names(default_files),
+      file_sizes(default_files),
+      last_modified_months(default_files),
+      last_modified_days(default_files),
+      last_modified_hour_minutes(default_files),
+      default_files
+    ]
+  end
 
   def build_grid(bird_elements)
     column_width = bird_elements.map { |element| element.to_s.length }.max
@@ -167,20 +170,7 @@ class LongOption
   end
 
   def last_modified_hour_minutes(default_files)
-    bird_elements = default_files.map do |file|
-      last_modified_month_day = File.mtime(file).to_date
-      six_month = Date.today << 6
-      if last_modified_month_day > six_month
-        File.mtime(file).strftime('%H:%M')
-      else
-        File.mtime(file).year
-      end
-    end
-    build_grid(bird_elements)
-  end
-
-  def file_names(default_files)
-    default_files
+    build_grid(default_files.map { |file| File.mtime(file).strftime('%H:%M') })
   end
 end
 
