@@ -19,7 +19,7 @@ FILE_TYPE = {
   '40' => 'd'
 }.freeze
 
-PRMISSION_MODE = {
+PERMISSION_MODE = {
   '000' => '---',
   '001' => '--x',
   '010' => '-w-',
@@ -134,7 +134,7 @@ result = Benchmark.realtime do
         file_modes(default_files).map do |file|
           file_mode_number = file[-3]
           file_mode = file_mode_number.to_i.to_s(2).rjust(3, '0')
-          PRMISSION_MODE.fetch(file_mode)
+          PERMISSION_MODE.fetch(file_mode)
         end
       end
     end
@@ -144,7 +144,7 @@ result = Benchmark.realtime do
         file_modes(default_files).map do |file|
           file_group_number = file[-2]
           file_group = file_group_number.to_i.to_s(2).rjust(3, '0')
-          PRMISSION_MODE.fetch(file_group)
+          PERMISSION_MODE.fetch(file_group)
         end
       end
     end
@@ -153,7 +153,7 @@ result = Benchmark.realtime do
       file_modes(default_files).map do |file|
         file_other_group_number = file[-1]
         file_other_group = file_other_group_number.to_i.to_s(2).rjust(3, '0')
-        PRMISSION_MODE.fetch(file_other_group)
+        PERMISSION_MODE.fetch(file_other_group)
       end
     end
 
