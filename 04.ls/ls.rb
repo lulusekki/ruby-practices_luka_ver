@@ -4,7 +4,6 @@
 require 'optparse'
 require 'etc'
 require 'date'
-require 'benchmark'
 
 COLUMNS = 3
 BLANK = 2
