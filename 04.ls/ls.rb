@@ -43,11 +43,10 @@ end
 class LongOption
   def output(default_files)
     files = output_grid(default_files)
+
     puts "total #{total(default_files)}"
 
-    files_count = files[0].size
-
-    files_count.times do |index|
+    files[0].size.times do |index|
       output = [
         files[0][index],
         files[1][index],
@@ -101,48 +100,31 @@ class LongOption
       other_groups(default_files)
     ]
 
-    permissions_count = default_files.size
-
-    Array.new(permissions_count) do |index|
+    Array.new(default_files.size) do |index|
       output = [
         permissions[0][index],
         permissions[1][index],
         permissions[2][index],
         permissions[3][index]
       ]
-      output.join(' ')
+      output.join('')
     end
   end
 
   def file_types(default_files)
-    file_modes(default_files).map do |file|
-      hash_serch_number = file[0..1]
-      FILE_TYPE.fetch(hash_serch_number)
-    end
+    file_modes(default_files).map { |file| FILE_TYPE.fetch(file[0..1]) }
   end
 
   def owners(default_files)
-    file_modes(default_files).map do |file|
-      file_mode_number = file[-3]
-      file_mode = file_mode_number.to_i.to_s(2).rjust(3, '0')
-      PERMISSION_MODE.fetch(file_mode)
-    end
+    file_modes(default_files).map { |file| PERMISSION_MODE.fetch(file[-3].to_i.to_s(2).rjust(3, '0')) }
   end
 
   def groups(default_files)
-    file_modes(default_files).map do |file|
-      file_group_number = file[-2]
-      file_group = file_group_number.to_i.to_s(2).rjust(3, '0')
-      PERMISSION_MODE.fetch(file_group)
-    end
+    file_modes(default_files).map { |file| PERMISSION_MODE.fetch(file[-2].to_i.to_s(2).rjust(3, '0')) }
   end
 
   def other_groups(default_files)
-    file_modes(default_files).map do |file|
-      file_other_group_number = file[-1]
-      file_other_group = file_other_group_number.to_i.to_s(2).rjust(3, '0')
-      PERMISSION_MODE.fetch(file_other_group)
-    end
+    file_modes(default_files).map { |file| PERMISSION_MODE.fetch(file[-1].to_i.to_s(2).rjust(3, '0')) }
   end
 
   def hard_links(default_files)
