@@ -46,16 +46,24 @@ class LongOption
     files.each do |file|
       puts [
         FileInformation.new.permission(file),
-        FileInformation.new.hard_link(file),
+        FileInformation.new.hard_link(file).to_s.rjust(column_width(default_files)[:hard_link]),
         FileInformation.new.owner_name(file),
         FileInformation.new.group_name(file),
-        FileInformation.new.file_size(file),
-        FileInformation.new.last_modified_month(file),
+        FileInformation.new.file_size(file).to_s.rjust(column_width(default_files)[:file_size]),
+        FileInformation.new.last_modified_month(file).to_s.rjust(column_width(default_files)[:last_modified_month]),
         FileInformation.new.last_modified_day(file),
-        FileInformation.new.last_modified_hour_minute(file)
+        FileInformation.new.last_modified_hour_minute(file),
+        FileInformation.new.file_name(file)
       ].join(' ')
-      # sleep 1.0;
     end
+  end
+
+  def column_width(default_files)
+    {
+      hard_link: default_files.map { |file| File.stat(file).nlink.to_s.length }.max,
+      file_size: default_files.map { |file| File.stat(file).size.to_s.length }.max,
+      last_modified_month:  default_files.map { |file| "#{File.mtime(file).month}月".to_s.length }.max
+    }
   end
 end
 
@@ -95,11 +103,15 @@ class FileInformation
   end
 
   def last_modified_day(file)
-    File.mtime(file).day
+    File.mtime(file).strftime("%d")
   end
 
   def last_modified_hour_minute(file)
     File.mtime(file).strftime('%H:%M')
+  end
+
+  def file_name(file)
+    file
   end
 
   private
