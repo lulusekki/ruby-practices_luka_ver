@@ -43,18 +43,10 @@ class LongOption
     files = default_files
     puts "total #{FileInformation.new.total(files)}"
 
-    files.each do |file|
+    files.each do |_file|
       puts [
-        FileInformation.new.permission(file),
-        FileInformation.new.hard_link(file),
-        FileInformation.new.owner_name(file),
-        FileInformation.new.group_name(file),
-        FileInformation.new.file_size(file),
-        FileInformation.new.last_modified_month(file),
-        FileInformation.new.last_modified_day(file),
-        FileInformation.new.last_modified_hour_minute(file)
+        FileInformation.permission
       ].join(' ')
-      # sleep 1.0;
     end
   end
 end
@@ -65,63 +57,41 @@ class FileInformation
     total.flatten.sum
   end
 
-  def permission(file)
-    [
-      file_type(file),
-      owner(file),
-      group(file),
-      other_group(file)
-    ].join('')
-  end
+  def permission(default_files)
+    permissions = [
+      file_type(default_files),
+      owner(default_files),
+      group(default_files),
+      other_group(default_files)
+    ]
 
-  def hard_link(file)
-    File.stat(file).nlink
-  end
-
-  def owner_name(file)
-    Etc.getpwuid(File.stat(file).uid).name
-  end
-
-  def group_name(file)
-    Etc.getgrgid(File.stat(file).gid).name
-  end
-
-  def file_size(file)
-    File.stat(file).size
-  end
-
-  def last_modified_month(file)
-    "#{File.mtime(file).month}月"
-  end
-
-  def last_modified_day(file)
-    File.mtime(file).day
-  end
-
-  def last_modified_hour_minute(file)
-    File.mtime(file).strftime('%H:%M')
+    Array.new(default_files.size) do |index|
+      output = [
+        permissions[0][index],
+        permissions[1][index],
+        permissions[2][index],
+        permissions[3][index]
+      ]
+      output.join('')
+    end
   end
 
   private
 
-  def file_mode(file)
-    File.stat(file).mode.to_s(8)
+  def file_types(default_files)
+    file_modes(default_files).map { |file| FILE_TYPE.fetch(file[0..1]) }
   end
 
-  def file_type(file)
-    FILE_TYPE.fetch(file_mode(file)[0..1])
+  def owners(default_files)
+    file_modes(default_files).map { |file| PERMISSION_MODE.fetch(file[-3].to_i.to_s(2).rjust(3, '0')) }
   end
 
-  def owner(file)
-    PERMISSION_MODE.fetch(file_mode(file)[-3].to_i.to_s(2).rjust(3, '0'))
+  def groups(default_files)
+    file_modes(default_files).map { |file| PERMISSION_MODE.fetch(file[-2].to_i.to_s(2).rjust(3, '0')) }
   end
 
-  def group(file)
-    PERMISSION_MODE.fetch(file_mode(file)[-2].to_i.to_s(2).rjust(3, '0'))
-  end
-
-  def other_group(file)
-    PERMISSION_MODE.fetch(file_mode(file)[-1].to_i.to_s(2).rjust(3, '0'))
+  def other_groups(default_files)
+    file_modes(default_files).map { |file| PERMISSION_MODE.fetch(file[-1].to_i.to_s(2).rjust(3, '0')) }
   end
 end
 
