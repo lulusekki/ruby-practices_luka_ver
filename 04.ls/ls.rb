@@ -58,11 +58,13 @@ class LongOption
     end
   end
 
+  private
+
   def column_width(default_files)
     {
       hard_link: default_files.map { |file| File.stat(file).nlink.to_s.length }.max,
       file_size: default_files.map { |file| File.stat(file).size.to_s.length }.max,
-      last_modified_month:  default_files.map { |file| "#{File.mtime(file).month}月".to_s.length }.max
+      last_modified_month: default_files.map { |file| "#{File.mtime(file).month}月".to_s.length }.max
     }
   end
 end
@@ -103,7 +105,7 @@ class FileInformation
   end
 
   def last_modified_day(file)
-    File.mtime(file).strftime("%d")
+    File.mtime(file).strftime('%d')
   end
 
   def last_modified_hour_minute(file)
