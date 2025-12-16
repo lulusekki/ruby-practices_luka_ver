@@ -41,19 +41,19 @@ end
 class LongOption
   def output(default_files)
     files = default_files
-    puts "total #{FileInformation.new.total(files)}"
+    puts "total #{total(files)}"
 
     files.each do |file|
       puts [
-        FileInformation.new.permission(file),
-        FileInformation.new.hard_link(file).to_s.rjust(column_width(default_files)[:hard_link]),
-        FileInformation.new.owner_name(file),
-        FileInformation.new.group_name(file),
-        FileInformation.new.file_size(file).to_s.rjust(column_width(default_files)[:file_size]),
-        FileInformation.new.last_modified_month(file).to_s.rjust(column_width(default_files)[:last_modified_month]),
-        FileInformation.new.last_modified_day(file),
-        FileInformation.new.last_modified_hour_minute(file),
-        FileInformation.new.file_name(file)
+        permission(file),
+        hard_link(file).to_s.rjust(column_width(default_files)[:hard_link]),
+        owner_name(file),
+        group_name(file),
+        file_size(file).to_s.rjust(column_width(default_files)[:file_size]),
+        last_modified_month(file).to_s.rjust(column_width(default_files)[:last_modified_month]),
+        last_modified_day(file),
+        last_modified_hour_minute(file),
+        file
       ].join(' ')
     end
   end
@@ -67,12 +67,9 @@ class LongOption
       last_modified_month: default_files.map { |file| "#{File.mtime(file).month}月".to_s.length }.max
     }
   end
-end
 
-class FileInformation
   def total(default_files)
-    total = default_files.map { |default_file| File.stat(default_file).blocks }
-    total.flatten.sum
+    default_files.sum { |default_file| File.stat(default_file).blocks }
   end
 
   def permission(file)
@@ -81,7 +78,7 @@ class FileInformation
       owner(file),
       group(file),
       other_group(file)
-    ].join('')
+    ].join
   end
 
   def hard_link(file)
@@ -101,7 +98,7 @@ class FileInformation
   end
 
   def last_modified_month(file)
-    "#{File.mtime(file).month}月"
+    File.mtime(file).strftime('%-m月')
   end
 
   def last_modified_day(file)
@@ -112,12 +109,6 @@ class FileInformation
     File.mtime(file).strftime('%H:%M')
   end
 
-  def file_name(file)
-    file
-  end
-
-  private
-
   def file_mode(file)
     File.stat(file).mode.to_s(8)
   end
@@ -127,15 +118,21 @@ class FileInformation
   end
 
   def owner(file)
-    PERMISSION_MODE.fetch(file_mode(file)[-3].to_i.to_s(2).rjust(3, '0'))
+    mode = file_mode(file)[-3]
+    zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
+    PERMISSION_MODE.fetch(zero_padding_mode)
   end
 
   def group(file)
-    PERMISSION_MODE.fetch(file_mode(file)[-2].to_i.to_s(2).rjust(3, '0'))
+    mode = file_mode(file)[-2]
+    zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
+    PERMISSION_MODE.fetch(zero_padding_mode)
   end
 
   def other_group(file)
-    PERMISSION_MODE.fetch(file_mode(file)[-1].to_i.to_s(2).rjust(3, '0'))
+    mode = file_mode(file)[-1]
+    zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
+    PERMISSION_MODE.fetch(zero_padding_mode)
   end
 end
 
