@@ -41,16 +41,22 @@ end
 class LongOption
   def output(default_files)
     files = default_files
+    stats = files.map { |file| File.stat(file) }
+
+    hard_link_width = stats.map { |stat| stat.nlink.to_s.length }.max
+    file_size_width = stats.map { |stat| stat.size.to_s.length }.max
+    last_modified_month_width = stats.map { |stat| stat.mtime.strftime('%-m月').length }.max
+
     puts "total #{total(files)}"
 
     files.each do |file|
       puts [
         permission(file),
-        hard_link(file).to_s.rjust(column_width(default_files)[:hard_link]),
+        hard_link(file).to_s.rjust(hard_link_width),
         owner_name(file),
         group_name(file),
-        file_size(file).to_s.rjust(column_width(default_files)[:file_size]),
-        last_modified_month(file).to_s.rjust(column_width(default_files)[:last_modified_month]),
+        file_size(file).to_s.rjust(file_size_width),
+        last_modified_month(file).to_s.rjust(last_modified_month_width),
         last_modified_day(file),
         last_modified_hour_minute(file),
         file
@@ -59,14 +65,6 @@ class LongOption
   end
 
   private
-
-  def column_width(default_files)
-    {
-      hard_link: default_files.map { |file| File.stat(file).nlink.to_s.length }.max,
-      file_size: default_files.map { |file| File.stat(file).size.to_s.length }.max,
-      last_modified_month: default_files.map { |file| "#{File.mtime(file).month}月".to_s.length }.max
-    }
-  end
 
   def total(default_files)
     default_files.sum { |default_file| File.stat(default_file).blocks }
