@@ -50,9 +50,9 @@ class LongOption
         owner_name: owner_name(stat),
         group_name: group_name(stat),
         file_size: file_size(stat),
-        last_modified_month: last_modified_month(stat),
-        last_modified_day: last_modified_day(stat),
-        last_modified_hour_minute: last_modified_hour_minute(stat),
+        last_modified_month: last_modified(stat, '%-m月'),
+        last_modified_day: last_modified(stat, '%d'),
+        last_modified_hour_minute: last_modified(stat, '%H:%M'),
         file: file
       }
     end
@@ -108,16 +108,8 @@ class LongOption
     stat.size
   end
 
-  def last_modified_month(stat)
-    stat.mtime.strftime('%-m月')
-  end
-
-  def last_modified_day(stat)
-    stat.mtime.strftime('%d')
-  end
-
-  def last_modified_hour_minute(stat)
-    stat.mtime.strftime('%H:%M')
+  def last_modified(stat, format)
+    stat.mtime.strftime(format)
   end
 
   def file_mode(stat)
