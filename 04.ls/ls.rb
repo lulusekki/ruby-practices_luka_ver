@@ -30,17 +30,16 @@ PERMISSION_MODE = {
 }.freeze
 
 def main
-  default_files = Dir.glob('*')
+  files = Dir.glob('*')
   if ARGV.include?('-l')
-    LongOption.new.output(default_files)
+    LongOption.new.output(files)
   else
-    Default.new.output(default_files)
+    Default.new.output(files)
   end
 end
 
 class LongOption
-  def output(default_files)
-    files = default_files
+  def output(files)
     stats = files.map { |file| File.stat(file) }
 
     hard_link_width = stats.map { |stat| stat.nlink.to_s.length }.max
@@ -66,8 +65,8 @@ class LongOption
 
   private
 
-  def total(default_files)
-    default_files.sum { |default_file| File.stat(default_file).blocks }
+  def total(files)
+    files.sum { |file| File.stat(file).blocks }
   end
 
   def permission(file)
@@ -135,8 +134,8 @@ class LongOption
 end
 
 class Default
-  def output(default_files)
-    file_grid, column_width = build_grid(default_files)
+  def output(files)
+    file_grid, column_width = build_grid(files)
     file_grid.each do |files|
       files.each do |file|
         print file.to_s.ljust(column_width + BLANK, ' ')
@@ -147,13 +146,13 @@ class Default
 
   private
 
-  def build_grid(default_files)
-    remainder = default_files.size % COLUMNS
+  def build_grid(files)
+    remainder = files.size % COLUMNS
     padding_count = (COLUMNS - remainder) % COLUMNS
-    padded_files = default_files + Array.new(padding_count, '')
+    padded_files = files + Array.new(padding_count, '')
     row_count = padded_files.size / COLUMNS
     file_grid = padded_files.each_slice(row_count).to_a.transpose
-    column_width = default_files.map(&:length).max
+    column_width = files.map(&:length).max
 
     [file_grid, column_width]
   end
