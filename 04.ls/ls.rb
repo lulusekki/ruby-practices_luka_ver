@@ -42,13 +42,7 @@ class LongOption
   def output(files)
     @stats = files.map { |file| [file, File.stat(file)] }
 
-    puts "total #{total}"
-
-    # 設計修正メモ①：横にループさせながら、各行のデータを収集
-    # この段段階では.rjustとかしない
-
     rows = []
-
     @stats.each do |file, stat|
       rows << {
         permission: permission(stat),
@@ -63,17 +57,11 @@ class LongOption
       }
     end
 
-    # 設計修正メモ②：列の幅を求める必要があれば、その列だけ最大の幅を求める
-    # hogeから最大の幅を取得
     hard_link_width = @stats.map { |_file, stat| stat.nlink.to_s.length }.max
     file_size_width = @stats.map { |_file, stat| stat.size.to_s.length }.max
     last_modified_month_width = @stats.map { |_file, stat| stat.mtime.strftime('%-m月').length }.max
 
-    # totalを計算して出力
     puts total
-
-    # 設計修正メモ③：集めたデータをきれいに整形して出力する
-
     rows.each do |row|
       puts [
         row[:permission],
@@ -87,11 +75,6 @@ class LongOption
         row[:file]
       ].join(' ')
     end
-
-    # hogeをきれいに整形して出力する
-    # hoge.each do
-    #   puts ...
-    # end
   end
 
   private
