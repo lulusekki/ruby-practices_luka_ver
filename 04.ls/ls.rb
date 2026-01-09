@@ -42,6 +42,35 @@ class LongOption
   def output(files)
     @stats = files.map { |file| [file, File.stat(file)] }
 
+    rows = build_row
+    widths = calculate_widths
+
+    puts "total #{total}"
+    rows.each do |row|
+      puts [
+        row[:permission],
+        row[:hard_link].to_s.rjust(widths[:hard_link]),
+        row[:owner_name].ljust(widths[:owner_name]),
+        row[:group_name].ljust(widths[:group_name]),
+        row[:file_size].to_s.rjust(widths[:file_size]),
+        row[:last_modified],
+        row[:file]
+      ].join(' ')
+    end
+  end
+
+  private
+
+  def calculate_widths
+    {
+      hard_link: @stats.map { |_, stat| stat.nlink.to_s.length }.max,
+      owner_name: @stats.map { |_, stat| Etc.getpwuid(stat.uid).name.length }.max,
+      group_name: @stats.map { |_, stat| Etc.getgrgid(stat.gid).name.length }.max,
+      file_size: @stats.map { |_, stat| stat.size.to_s.length }.max
+    }
+  end
+
+  def build_row
     rows = []
     @stats.each do |file, stat|
       rows << {
@@ -50,34 +79,12 @@ class LongOption
         owner_name: owner_name(stat),
         group_name: group_name(stat),
         file_size: file_size(stat),
-        last_modified_month: last_modified(stat, '%-m月'),
-        last_modified_day: last_modified(stat, '%d'),
-        last_modified_hour_minute: last_modified(stat, '%H:%M'),
+        last_modified: last_modified(stat, '%b %e %H:%M'),
         file: file
       }
     end
-
-    hard_link_width = @stats.map { |_file, stat| stat.nlink.to_s.length }.max
-    file_size_width = @stats.map { |_file, stat| stat.size.to_s.length }.max
-    last_modified_month_width = @stats.map { |_file, stat| stat.mtime.strftime('%-m月').length }.max
-
-    puts total
-    rows.each do |row|
-      puts [
-        row[:permission],
-        row[:hard_link].to_s.rjust(hard_link_width),
-        row[:owner_name],
-        row[:group_name],
-        row[:file_size].to_s.rjust(file_size_width),
-        row[:last_modified_month].to_s.rjust(last_modified_month_width),
-        row[:last_modified_day],
-        row[:last_modified_hour_minute],
-        row[:file]
-      ].join(' ')
-    end
+    rows
   end
-
-  private
 
   def total
     @stats.sum { |stat| stat[1].blocks }
