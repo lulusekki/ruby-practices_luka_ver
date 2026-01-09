@@ -43,16 +43,16 @@ class LongOption
     @stats = files.map { |file| [file, File.stat(file)] }
 
     rows = build_row
-    widths = calculate_widths
+    @widths = calculate_widths
 
     puts "total #{total}"
     rows.each do |row|
       puts [
         row[:permission],
-        row[:hard_link].to_s.rjust(widths[:hard_link]),
-        row[:owner_name].ljust(widths[:owner_name]),
-        row[:group_name].ljust(widths[:group_name]),
-        row[:file_size].to_s.rjust(widths[:file_size]),
+        row[:hard_link].to_s.rjust(@widths[:hard_link]),
+        row[:owner_name].ljust(@widths[:owner_name]),
+        row[:group_name].ljust(@widths[:group_name]),
+        row[:file_size].to_s.rjust(@widths[:file_size]),
         row[:last_modified],
         row[:file]
       ].join(' ')
