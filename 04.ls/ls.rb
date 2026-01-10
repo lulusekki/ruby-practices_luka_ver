@@ -62,13 +62,12 @@ class LongOption
   private
 
   def calculate_widths
-    widths = {
+    @calculate_widths ||= {
       hard_link: @stats.map { |_, stat| stat.nlink.to_s.length }.max,
       owner_name: @stats.map { |_, stat| Etc.getpwuid(stat.uid).name.length }.max,
       group_name: @stats.map { |_, stat| Etc.getgrgid(stat.gid).name.length }.max,
       file_size: @stats.map { |_, stat| stat.size.to_s.length }.max
     }
-    widths
   end
 
   def build_row
