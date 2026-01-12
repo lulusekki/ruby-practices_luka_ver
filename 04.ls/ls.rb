@@ -4,6 +4,7 @@
 require 'optparse'
 require 'etc'
 require 'date'
+require 'debug'
 
 COLUMNS = 3
 BLANK = 2
@@ -40,19 +41,19 @@ end
 
 class LongOption
   def output(files)
-    @stats = files.map { |file| [file, File.stat(file)] }
+    stats = files.map { |file| File.stat(file) }
 
-    rows = build_row
-    @widths = calculate_widths
+    rows = build_row(files, stats)
+    widths = calculate_widths(stats)
 
-    puts "total #{total}"
+    puts "total #{stats.sum(&:blocks)}"
     rows.each do |row|
       puts [
         row[:permission],
-        row[:hard_link].to_s.rjust(@widths[:hard_link]),
-        row[:owner_name].ljust(@widths[:owner_name]),
-        row[:group_name].ljust(@widths[:group_name]),
-        row[:file_size].to_s.rjust(@widths[:file_size]),
+        row[:hard_link].to_s.rjust(widths[:hard_link]),
+        row[:owner_name].ljust(widths[:owner_name]),
+        row[:group_name].ljust(widths[:group_name]),
+        row[:file_size].to_s.rjust(widths[:file_size]),
         row[:last_modified],
         row[:file]
       ].join(' ')
@@ -61,33 +62,28 @@ class LongOption
 
   private
 
-  def calculate_widths
-    @calculate_widths ||= {
-      hard_link: @stats.map { |_, stat| stat.nlink.to_s.length }.max,
-      owner_name: @stats.map { |_, stat| Etc.getpwuid(stat.uid).name.length }.max,
-      group_name: @stats.map { |_, stat| Etc.getgrgid(stat.gid).name.length }.max,
-      file_size: @stats.map { |_, stat| stat.size.to_s.length }.max
+  def calculate_widths(stats)
+    {
+      hard_link: stats.map { |stat| stat.nlink.to_s.length }.max,
+      owner_name: stats.map { |stat| Etc.getpwuid(stat.uid).name.length }.max,
+      group_name: stats.map { |stat| Etc.getgrgid(stat.gid).name.length }.max,
+      file_size: stats.map { |stat| stat.size.to_s.length }.max
     }
   end
 
-  def build_row
-    rows = []
-    @stats.each do |file, stat|
-      rows << {
+  def build_row(files, stats)
+    # binding.break
+    stats.zip(files).map do |stat, file|
+      {
         permission: permission(stat),
-        hard_link: hard_link(stat),
-        owner_name: owner_name(stat),
-        group_name: group_name(stat),
-        file_size: file_size(stat),
-        last_modified: last_modified(stat, '%b %e %H:%M'),
+        hard_link: stat.nlink,
+        owner_name: Etc.getpwuid(stat.uid).name,
+        group_name: Etc.getgrgid(stat.gid).name,
+        file_size: stat.size,
+        last_modified: stat.mtime.strftime('%b %e %H:%M'),
         file: file
       }
     end
-    rows
-  end
-
-  def total
-    @stats.sum { |stat| stat[1].blocks }
   end
 
   def permission(stat)
@@ -99,48 +95,24 @@ class LongOption
     ].join
   end
 
-  def hard_link(stat)
-    stat.nlink
-  end
-
-  def owner_name(stat)
-    Etc.getpwuid(stat.uid).name
-  end
-
-  def group_name(stat)
-    Etc.getgrgid(stat.gid).name
-  end
-
-  def file_size(stat)
-    stat.size
-  end
-
-  def last_modified(stat, format)
-    stat.mtime.strftime(format)
-  end
-
-  def file_mode(stat)
-    stat.mode.to_s(8)
-  end
-
   def file_type(stat)
-    FILE_TYPE.fetch(file_mode(stat)[0..1])
+    FILE_TYPE.fetch(stat.mode.to_s(8)[0..1])
   end
 
   def owner(stat)
-    mode = file_mode(stat)[-3]
+    mode = stat.mode.to_s(8)[-3]
     zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
     PERMISSION_MODE.fetch(zero_padding_mode)
   end
 
   def group(stat)
-    mode = file_mode(stat)[-2]
+    mode = stat.mode.to_s(8)[-2]
     zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
     PERMISSION_MODE.fetch(zero_padding_mode)
   end
 
   def other_group(stat)
-    mode = file_mode(stat)[-1]
+    mode = stat.mode.to_s(8)[-1]
     zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
     PERMISSION_MODE.fetch(zero_padding_mode)
   end
