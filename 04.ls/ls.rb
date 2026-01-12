@@ -4,7 +4,6 @@
 require 'optparse'
 require 'etc'
 require 'date'
-require 'debug'
 
 COLUMNS = 3
 BLANK = 2
@@ -72,7 +71,6 @@ class LongOption
   end
 
   def build_row(files, stats)
-    # binding.break
     stats.zip(files).map do |stat, file|
       {
         permission: permission(stat),
