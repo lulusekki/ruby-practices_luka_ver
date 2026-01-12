@@ -78,7 +78,7 @@ class LongOption
         owner_name: Etc.getpwuid(stat.uid).name,
         group_name: Etc.getgrgid(stat.gid).name,
         file_size: stat.size,
-        last_modified: stat.mtime.strftime('%b %e %H:%M'),
+        last_modified: last_modified(stat),
         file: file
       }
     end
@@ -113,6 +113,11 @@ class LongOption
     mode = stat.mode.to_s(8)[-1]
     zero_padding_mode = mode.to_i.to_s(2).rjust(3, '0')
     PERMISSION_MODE.fetch(zero_padding_mode)
+  end
+
+  def last_modified(stat)
+    modified_time = stat.mtime
+    "#{modified_time.month.to_s.rjust(2)}月 #{modified_time.day.to_s.rjust(2)} #{modified_time.strftime('%H:%M')}"
   end
 end
 
