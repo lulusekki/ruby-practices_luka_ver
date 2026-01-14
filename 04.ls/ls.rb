@@ -117,7 +117,7 @@ class LongOption
 
   def last_modified(stat)
     modified_time = stat.mtime
-    "#{modified_time.month.to_s.rjust(2)}月 #{modified_time.day.to_s.rjust(2)} #{modified_time.strftime('%H:%M')}"
+    modified_time.strftime("%_m月 %_d %H:%M")
   end
 end
 
