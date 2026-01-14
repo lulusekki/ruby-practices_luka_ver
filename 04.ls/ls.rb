@@ -40,12 +40,11 @@ end
 
 class LongOption
   def output(files)
-    stats = files.map { |file| File.stat(file) }
 
-    rows = build_row(files, stats)
-    widths = calculate_widths(stats)
+    rows = build_row(files)
+    widths = calculate_widths(rows)
 
-    puts "total #{stats.sum(&:blocks)}"
+    puts "total #{rows.sum {| row | row[:blocks]}}"
     rows.each do |row|
       puts [
         row[:permission],
@@ -61,18 +60,20 @@ class LongOption
 
   private
 
-  def calculate_widths(stats)
+  def calculate_widths(rows)
     {
-      hard_link: stats.map { |stat| stat.nlink.to_s.length }.max,
-      owner_name: stats.map { |stat| Etc.getpwuid(stat.uid).name.length }.max,
-      group_name: stats.map { |stat| Etc.getgrgid(stat.gid).name.length }.max,
-      file_size: stats.map { |stat| stat.size.to_s.length }.max
+      hard_link: rows.map { |row| row[:hard_link].to_s.length }.max,
+      owner_name: rows.map { |row| row[:owner_name].length }.max,
+      group_name: rows.map { |row| row[:group_name].length }.max,
+      file_size: rows.map { |row| row[:file_size].to_s.length }.max
     }
   end
 
-  def build_row(files, stats)
-    stats.zip(files).map do |stat, file|
+  def build_row(files)
+    files.map do |file|
+       stat = File.stat(file)
       {
+        blocks: stat.blocks,
         permission: permission(stat),
         hard_link: stat.nlink,
         owner_name: Etc.getpwuid(stat.uid).name,
