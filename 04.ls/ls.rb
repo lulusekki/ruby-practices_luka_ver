@@ -40,11 +40,10 @@ end
 
 class LongOption
   def output(files)
-
     rows = build_row(files)
     widths = calculate_widths(rows)
 
-    puts "total #{rows.sum {| row | row[:blocks]}}"
+    puts "total #{rows.sum { |row| row[:blocks] }}"
     rows.each do |row|
       puts [
         row[:permission],
@@ -71,7 +70,7 @@ class LongOption
 
   def build_row(files)
     files.map do |file|
-       stat = File.stat(file)
+      stat = File.stat(file)
       {
         blocks: stat.blocks,
         permission: permission(stat),
@@ -118,7 +117,7 @@ class LongOption
 
   def last_modified(stat)
     modified_time = stat.mtime
-    modified_time.strftime("%_m月 %_d %H:%M")
+    modified_time.strftime('%_m月 %_d %H:%M')
   end
 end
 
