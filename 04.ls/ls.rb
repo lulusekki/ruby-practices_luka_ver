@@ -43,7 +43,8 @@ class LongOption
     rows = build_rows(files)
     widths = calculate_widths(rows)
 
-    puts "total #{rows.sum { |row| row[:blocks] }}"
+    total = rows.sum { |row| row[:blocks] }
+    puts "total #{total}"
     rows.each do |row|
       puts [
         row[:permission],
