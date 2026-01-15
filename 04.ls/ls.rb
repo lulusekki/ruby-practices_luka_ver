@@ -40,7 +40,7 @@ end
 
 class LongOption
   def output(files)
-    rows = build_row(files)
+    rows = build_rows(files)
     widths = calculate_widths(rows)
 
     puts "total #{rows.sum { |row| row[:blocks] }}"
@@ -68,7 +68,7 @@ class LongOption
     }
   end
 
-  def build_row(files)
+  def build_rows(files)
     files.map do |file|
       stat = File.stat(file)
       {
