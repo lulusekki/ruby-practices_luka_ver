@@ -29,36 +29,43 @@ PERMISSION_MODE = {
   '111' => 'rwx'
 }.freeze
 
-def main
-  files = Dir.glob('*')
-  if ARGV.include?('-l')
-    LongOption.new.output(files)
-  else
-    Default.new.output(files)
-  end
-end
+class Lscommand
+  def execute
+    options = ARGV.getopts('a', 'r', 'l')
+    # flags = ARGV.include?('') ? File::FNM_DOTMATCH : 0
+    flags = options['a'] ? File::FNM_DOTMATCH : 0
+    files = Dir.glob('*', flags)
 
-class LongOption
-  def output(files)
-    rows = build_rows(files)
-    widths = calculate_widths(rows)
+    files = options['r'] ? files.reverse : files
+    file_grid, column_width = Build.new.default(files)
 
-    total = rows.sum { |row| row[:blocks] }
-    puts "total #{total}"
-    rows.each do |row|
-      puts [
-        row[:permission],
-        row[:hard_link].to_s.rjust(widths[:hard_link]),
-        row[:owner_name].ljust(widths[:owner_name]),
-        row[:group_name].ljust(widths[:group_name]),
-        row[:file_size].to_s.rjust(widths[:file_size]),
-        row[:last_modified],
-        row[:file]
-      ].join(' ')
+    if options['l'] == true
+      Build.new.long_option(files)
+    else
+      Output.new.execute(file_grid, column_width)
     end
   end
 
-  private
+  # def parse
+  #   files = params.ARGV.include?('-a') ? File::FNM_DOTMATCH : 0
+  #   files = Dir.glob('*')
+  # end
+end
+
+class Build
+  def default(files)
+    remainder = files.size % COLUMNS
+    padding_count = (COLUMNS - remainder) % COLUMNS
+    padded_files = files + Array.new(padding_count, '')
+    row_count = padded_files.size / COLUMNS
+    file_grid = padded_files.each_slice(row_count).to_a.transpose
+    column_width = files.map(&:length).max
+    [file_grid, column_width]
+  end
+
+  def long_option(files)
+    Output.new.long_option(files)
+  end
 
   def calculate_widths(rows)
     {
@@ -84,6 +91,8 @@ class LongOption
       }
     end
   end
+
+  private
 
   def permission(stat)
     [
@@ -121,9 +130,12 @@ class LongOption
   end
 end
 
-class Default
-  def output(files)
-    file_grid, column_width = build_grid(files)
+# class all
+
+# end
+
+class Output
+  def execute(file_grid, column_width)
     file_grid.each do |files|
       files.each do |file|
         print file.to_s.ljust(column_width + BLANK, ' ')
@@ -132,18 +144,24 @@ class Default
     end
   end
 
-  private
+  def long_option(files)
+    rows = Build.new.build_rows(files)
+    widths = Build.new.calculate_widths(rows)
 
-  def build_grid(files)
-    remainder = files.size % COLUMNS
-    padding_count = (COLUMNS - remainder) % COLUMNS
-    padded_files = files + Array.new(padding_count, '')
-    row_count = padded_files.size / COLUMNS
-    file_grid = padded_files.each_slice(row_count).to_a.transpose
-    column_width = files.map(&:length).max
-
-    [file_grid, column_width]
+    total = rows.sum { |row| row[:blocks] }
+    puts "total #{total}"
+    rows.each do |row|
+      puts [
+        row[:permission],
+        row[:hard_link].to_s.rjust(widths[:hard_link]),
+        row[:owner_name].ljust(widths[:owner_name]),
+        row[:group_name].ljust(widths[:group_name]),
+        row[:file_size].to_s.rjust(widths[:file_size]),
+        row[:last_modified],
+        row[:file]
+      ].join(' ')
+    end
   end
 end
 
-main
+Lscommand.new.execute
