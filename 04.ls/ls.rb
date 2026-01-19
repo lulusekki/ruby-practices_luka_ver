@@ -37,7 +37,7 @@ class Lscommand
     default_files = Dir.glob('*', flags)
 
     files = options['r'] ? default_files.reverse : default_files
-    
+
     if options['l'] == true
       Output.new.include_long_option(files)
     else
