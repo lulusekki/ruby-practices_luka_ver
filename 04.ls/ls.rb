@@ -29,7 +29,7 @@ PERMISSION_MODE = {
   '111' => 'rwx'
 }.freeze
 
-class Lscommand
+class LsCommand
   def execute
     options = ARGV.getopts('a', 'r', 'l')
 
@@ -37,8 +37,8 @@ class Lscommand
     default_files = Dir.glob('*', flags)
 
     files = options['r'] ? default_files.reverse : default_files
-
-    if options['l'] == true
+    
+    if options['l']
       Output.new.include_long_option(files)
     else
       Output.new.default(files)
