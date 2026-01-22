@@ -29,20 +29,18 @@ PERMISSION_MODE = {
   '111' => 'rwx'
 }.freeze
 
-class LsCommand
-  def execute
-    options = ARGV.getopts('a', 'r', 'l')
-
-    flags = options['a'] ? File::FNM_DOTMATCH : 0
-    default_files = Dir.glob('*', flags)
-
-    files = options['r'] ? default_files.reverse : default_files
-    
-    if options['l']
-      Output.new.include_long_option(files)
-    else
-      Output.new.default(files)
-    end
+def main
+  options = ARGV.getopts('a', 'r', 'l')
+  
+  flags = options['a'] ? File::FNM_DOTMATCH : 0
+  default_files = Dir.glob('*', flags)
+  
+  files = options['r'] ? default_files.reverse : default_files
+  
+  if options['l']
+    Output.new.include_long_option(files)
+  else
+    Output.new.default(files)
   end
 end
 
@@ -151,4 +149,4 @@ class Output
   end
 end
 
-Lscommand.new.execute
+main
