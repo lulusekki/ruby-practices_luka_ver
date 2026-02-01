@@ -31,21 +31,29 @@ PERMISSION_MODE = {
 
 def main
   options = ARGV.getopts('a', 'r', 'l')
-  
+
   flags = options['a'] ? File::FNM_DOTMATCH : 0
   default_files = Dir.glob('*', flags)
-  
+
   files = options['r'] ? default_files.reverse : default_files
-  
-  if options['l']
-    Output.new.include_long_option(files)
-  else
-    Output.new.default(files)
-  end
+
+  options['l'] ? LongFormat.new.output(files) : DefaultFormat.new.output(files)
 end
 
-class FileBuild
-  def default(files)
+class DefaultFormat
+  def output(files)
+    file_grid, column_width = file_build(files)
+    file_grid.each do |files|
+      files.each do |file|
+        print file.to_s.ljust(column_width + BLANK, ' ')
+      end
+      puts
+    end
+  end
+
+  private
+
+  def file_build(files)
     remainder = files.size % COLUMNS
     padding_count = (COLUMNS - remainder) % COLUMNS
     padded_files = files + Array.new(padding_count, '')
@@ -54,6 +62,29 @@ class FileBuild
     column_width = files.map(&:length).max
     [file_grid, column_width]
   end
+end
+
+class LongFormat
+  def output(files)
+    rows = build_rows(files)
+    widths = calculate_widths(rows)
+
+    total = rows.sum { |row| row[:blocks] }
+    puts "total #{total}"
+    rows.each do |row|
+      puts [
+        row[:permission],
+        row[:hard_link].to_s.rjust(widths[:hard_link]),
+        row[:owner_name].ljust(widths[:owner_name]),
+        row[:group_name].ljust(widths[:group_name]),
+        row[:file_size].to_s.rjust(widths[:file_size]),
+        row[:last_modified],
+        row[:file]
+      ].join(' ')
+    end
+  end
+
+  private
 
   def calculate_widths(rows)
     {
@@ -79,8 +110,6 @@ class FileBuild
       }
     end
   end
-
-  private
 
   def permission(stat)
     [
@@ -115,37 +144,6 @@ class FileBuild
 
   def last_modified(stat)
     stat.mtime.strftime('%_m月 %_d %H:%M')
-  end
-end
-
-class Output
-  def default(files)
-    file_grid, column_width = FileBuild.new.default(files)
-    file_grid.each do |files|
-      files.each do |file|
-        print file.to_s.ljust(column_width + BLANK, ' ')
-      end
-      puts
-    end
-  end
-
-  def include_long_option(files)
-    rows = FileBuild.new.build_rows(files)
-    widths = FileBuild.new.calculate_widths(rows)
-
-    total = rows.sum { |row| row[:blocks] }
-    puts "total #{total}"
-    rows.each do |row|
-      puts [
-        row[:permission],
-        row[:hard_link].to_s.rjust(widths[:hard_link]),
-        row[:owner_name].ljust(widths[:owner_name]),
-        row[:group_name].ljust(widths[:group_name]),
-        row[:file_size].to_s.rjust(widths[:file_size]),
-        row[:last_modified],
-        row[:file]
-      ].join(' ')
-    end
   end
 end
 
