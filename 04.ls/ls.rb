@@ -38,14 +38,14 @@ def main
   files = options['r'] ? default_files.reverse : default_files
 
   formatter =  options['l'] ? LongFormatter.new : DefaultFormatter.new
-  formatter.result(files)
+  formatter.print_files(files)
 end
 
 class DefaultFormatter
-  def result(files)
-    file_grid, column_width = file_build(files)
-    file_grid.each do |files|
-      files.each do |file|
+  def print_files(files)
+    file_grid, column_width = format_files(files)
+    file_grid.each do |row|
+      row.each do |file|
         print file.to_s.ljust(column_width + BLANK, ' ')
       end
       puts
@@ -54,7 +54,7 @@ class DefaultFormatter
 
   private
 
-  def file_build(files)
+  def format_files(files)
     remainder = files.size % COLUMNS
     padding_count = (COLUMNS - remainder) % COLUMNS
     padded_files = files + Array.new(padding_count, '')
@@ -66,7 +66,7 @@ class DefaultFormatter
 end
 
 class LongFormatter
-  def result(files)
+  def print_files(files)
     rows = build_rows(files)
     widths = calculate_widths(rows)
 
