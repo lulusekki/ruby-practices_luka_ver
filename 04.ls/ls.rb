@@ -37,7 +37,7 @@ def main
 
   files = options['r'] ? default_files.reverse : default_files
 
-  formatter =  options['l'] ? LongFormatter.new : DefaultFormatter.new
+  formatter = options['l'] ? LongFormatter.new : DefaultFormatter.new
   formatter.print_files(files)
 end
 
@@ -72,7 +72,7 @@ class LongFormatter
 
     total = rows.sum { |row| row[:blocks] }
     puts "total #{total}"
-    
+
     rows.each do |row|
       formatted_row = [
         row[:permission],
