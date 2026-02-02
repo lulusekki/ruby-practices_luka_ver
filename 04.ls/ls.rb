@@ -72,8 +72,9 @@ class LongFormatter
 
     total = rows.sum { |row| row[:blocks] }
     puts "total #{total}"
+    
     rows.each do |row|
-      puts [
+      formatted_row = [
         row[:permission],
         row[:hard_link].to_s.rjust(widths[:hard_link]),
         row[:owner_name].ljust(widths[:owner_name]),
@@ -82,6 +83,8 @@ class LongFormatter
         row[:last_modified],
         row[:file]
       ].join(' ')
+
+      puts formatted_row
     end
   end
 
