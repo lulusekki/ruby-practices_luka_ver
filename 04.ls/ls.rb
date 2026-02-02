@@ -37,10 +37,11 @@ def main
 
   files = options['r'] ? default_files.reverse : default_files
 
-  options['l'] ? LongFormat.new.output(files) : DefaultFormat.new.output(files)
+  formatter =  options['l'] ? LongFormatter.new : DefaultFormatter.new
+  formatter.output(files)
 end
 
-class DefaultFormat
+class DefaultFormatter
   def output(files)
     file_grid, column_width = file_build(files)
     file_grid.each do |files|
@@ -64,7 +65,7 @@ class DefaultFormat
   end
 end
 
-class LongFormat
+class LongFormatter
   def output(files)
     rows = build_rows(files)
     widths = calculate_widths(rows)
