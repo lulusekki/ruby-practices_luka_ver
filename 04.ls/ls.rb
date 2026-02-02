@@ -33,9 +33,9 @@ def main
   options = ARGV.getopts('a', 'r', 'l')
 
   flags = options['a'] ? File::FNM_DOTMATCH : 0
-  default_files = Dir.glob('*', flags)
+  base_files = Dir.glob('*', flags)
 
-  files = options['r'] ? default_files.reverse : default_files
+  files = options['r'] ? base_files.reverse : base_files
 
   formatter = options['l'] ? LongFormatter.new : DefaultFormatter.new
   formatter.print_files(files)
