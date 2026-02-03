@@ -30,23 +30,51 @@ PERMISSION_MODE = {
 }.freeze
 
 def main
-  files = Dir.glob('*')
-  if ARGV.include?('-l')
-    LongOption.new.output(files)
-  else
-    Default.new.output(files)
+  options = ARGV.getopts('a', 'r', 'l')
+
+  flags = options['a'] ? File::FNM_DOTMATCH : 0
+  base_files = Dir.glob('*', flags)
+
+  files = options['r'] ? base_files.reverse : base_files
+
+  formatter = options['l'] ? LongFormatter.new : DefaultFormatter.new
+  formatter.print_files(files)
+end
+
+class DefaultFormatter
+  def print_files(files)
+    file_grid, column_width = format_files(files)
+    file_grid.each do |row|
+      row.each do |file|
+        print file.to_s.ljust(column_width + BLANK, ' ')
+      end
+      puts
+    end
+  end
+
+  private
+
+  def format_files(files)
+    remainder = files.size % COLUMNS
+    padding_count = (COLUMNS - remainder) % COLUMNS
+    padded_files = files + Array.new(padding_count, '')
+    row_count = padded_files.size / COLUMNS
+    file_grid = padded_files.each_slice(row_count).to_a.transpose
+    column_width = files.map(&:length).max
+    [file_grid, column_width]
   end
 end
 
-class LongOption
-  def output(files)
+class LongFormatter
+  def print_files(files)
     rows = build_rows(files)
     widths = calculate_widths(rows)
 
     total = rows.sum { |row| row[:blocks] }
     puts "total #{total}"
+
     rows.each do |row|
-      puts [
+      formatted_row = [
         row[:permission],
         row[:hard_link].to_s.rjust(widths[:hard_link]),
         row[:owner_name].ljust(widths[:owner_name]),
@@ -55,6 +83,8 @@ class LongOption
         row[:last_modified],
         row[:file]
       ].join(' ')
+
+      puts formatted_row
     end
   end
 
@@ -118,31 +148,6 @@ class LongOption
 
   def last_modified(stat)
     stat.mtime.strftime('%_m月 %_d %H:%M')
-  end
-end
-
-class Default
-  def output(files)
-    file_grid, column_width = build_grid(files)
-    file_grid.each do |files|
-      files.each do |file|
-        print file.to_s.ljust(column_width + BLANK, ' ')
-      end
-      puts
-    end
-  end
-
-  private
-
-  def build_grid(files)
-    remainder = files.size % COLUMNS
-    padding_count = (COLUMNS - remainder) % COLUMNS
-    padded_files = files + Array.new(padding_count, '')
-    row_count = padded_files.size / COLUMNS
-    file_grid = padded_files.each_slice(row_count).to_a.transpose
-    column_width = files.map(&:length).max
-
-    [file_grid, column_width]
   end
 end
 
