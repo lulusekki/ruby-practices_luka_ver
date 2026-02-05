@@ -10,48 +10,45 @@ def main
   totals = Hash.new(0)
 
   if ARGV.empty?
-    content = STDIN.read
+    content = $stdin.read
     row_informations = file_information(content)
     print_counts(keys, row_informations, '')
   else
     ARGV.each do |file_name|
       content = File.read(file_name)
       row_informations = file_information(content)
-  
+
       keys.each do |key|
         totals[key] += row_informations[key]
       end
-  
+
       print_counts(keys, row_informations, file_name)
     end
 
     file_size = 2
-    if ARGV.size >= file_size
-      print_counts(keys, totals, 'total')
-    end
+    print_counts(keys, totals, 'total') if ARGV.size >= file_size
   end
 end
-
 
 def parse_options
   keys = []
 
   OptionParser.new do |opt|
-    opt.on('-l') {|key| keys << :line }
-    opt.on('-w') {|key| keys << :word }
-    opt.on('-c') {|key| keys << :byte }
-  
+    opt.on('-l') { |_key| keys << :line }
+    opt.on('-w') { |_key| keys << :word }
+    opt.on('-c') { |_key| keys << :byte }
+
     opt.parse!(ARGV)
   end
-  
-  keys.empty? ? [:line, :word, :byte] : keys
+
+  keys.empty? ? %i[line word byte] : keys
 end
 
 def file_information(content)
   {
     line: content.count("\n"),
     word: content.scan(/\S+/).size,
-    byte: content.bytesize,
+    byte: content.bytesize
   }
 end
 
