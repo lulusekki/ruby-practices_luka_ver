@@ -8,7 +8,7 @@ MIN_FILES_TOTAL = 2
 
 def main
   options = parse_options
-  
+
   if ARGV.empty?
     content = $stdin.read
     counts = calculate_counts(content)
