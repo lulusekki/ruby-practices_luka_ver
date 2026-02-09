@@ -19,9 +19,7 @@ def main
       content = File.read(file_name)
       counts = calculate_counts(content)
 
-      options.each do |option|
-        totals[option] += counts[option]
-      end
+      options.each { |option| totals[option] += counts[option] }
 
       print_counts(options, counts, file_name)
     end
