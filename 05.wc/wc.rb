@@ -4,16 +4,17 @@
 require 'optparse'
 
 WIDTH = 8
+MIN_FILES_TOTAL = 2
 
 def main
   options = parse_options
-  totals = Hash.new(0)
-
+  
   if ARGV.empty?
     content = $stdin.read
     counts = calculate_counts(content)
     print_counts(options, counts, '')
   else
+    totals = Hash.new(0)
     ARGV.each do |file_name|
       content = File.read(file_name)
       counts = calculate_counts(content)
@@ -25,8 +26,7 @@ def main
       print_counts(options, counts, file_name)
     end
 
-    file_size = 2
-    print_counts(options, totals, 'total') if ARGV.size >= file_size
+    print_counts(options, totals, 'total') if ARGV.size >= MIN_FILES_TOTAL
   end
 end
 
@@ -53,11 +53,11 @@ def calculate_counts(content)
 end
 
 def print_counts(options, counts, label)
-  output_content = options.map do |option|
+  output_contents = options.map do |option|
     counts[option].to_s.rjust(WIDTH)
   end
 
-  puts "#{output_content.join(' ')} #{label}"
+  puts "#{output_contents.join(' ')} #{label}"
 end
 
 main
