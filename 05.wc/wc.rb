@@ -11,18 +11,18 @@ def main
 
   if ARGV.empty?
     content = $stdin.read
-    row_informations = file_information(content)
-    print_counts(options, row_informations, '')
+    counts = calculate_counts(content)
+    print_counts(options, counts, '')
   else
     ARGV.each do |file_name|
       content = File.read(file_name)
-      row_informations = file_information(content)
+      counts = calculate_counts(content)
 
       options.each do |option|
-        totals[option] += row_informations[option]
+        totals[option] += counts[option]
       end
 
-      print_counts(options, row_informations, file_name)
+      print_counts(options, counts, file_name)
     end
 
     file_size = 2
@@ -34,9 +34,9 @@ def parse_options
   options = []
 
   OptionParser.new do |opt|
-    opt.on('-l') { |_option| options << :line }
-    opt.on('-w') { |_option| options << :word }
-    opt.on('-c') { |_option| options << :byte }
+    opt.on('-l') { options << :line }
+    opt.on('-w') { options << :word }
+    opt.on('-c') { options << :byte }
 
     opt.parse!(ARGV)
   end
@@ -44,7 +44,7 @@ def parse_options
   options.empty? ? %i[line word byte] : options
 end
 
-def file_information(content)
+def calculate_counts(content)
   {
     line: content.count("\n"),
     word: content.scan(/\S+/).size,
@@ -52,9 +52,9 @@ def file_information(content)
   }
 end
 
-def print_counts(options, row_informations, label)
+def print_counts(options, counts, label)
   output_content = options.map do |option|
-    row_informations[option].to_s.rjust(WIDTH)
+    counts[option].to_s.rjust(WIDTH)
   end
 
   puts "#{output_content.join(' ')} #{label}"
